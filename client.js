@@ -6,24 +6,25 @@ var protoDefinition = grpc.loadPackageDefinition(packageDefinition).greeter;
 
 var client = new protoDefinition.GreeterService('localhost:50051', grpc.credentials.createInsecure());
 
+var HelloRequest;
+protobuf.load("protos/greeter.proto", function(err, root) {
+  if (err) throw err;
+
+  // Obtain a message type
+  HelloRequest = root.lookupType('greeter.HelloRequest');
+});
+
+
 var testObject = {
   a: 1,
   b: 'two',
   c: {
     d: false
   }
-}
+};
 
 client.SayHello(
-  {
-    "Box": {
-      "fields": {
-        "Hello": {
-          "kind": 0
-        }
-      }
-    }
-  },
+  HelloRequest.create(testObject),
   ((response) => { console.log('response', response); })
 );
 
